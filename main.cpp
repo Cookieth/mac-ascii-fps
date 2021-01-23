@@ -28,6 +28,48 @@ Outstanding questions
 
 */
 
+// Leaving the tetris screen thing here... just in case!
+//const std::string screenstr = "  ┏━━k-vernooy/tetris━━┓\n  ┃                    ┃\n  ┃                    ┃   ┏━━next━━━┓\n  ┃                    ┃   ┃         ┃\n  ┃                    ┃   ┃         ┃\n  ┃                    ┃   ┃         ┃\n  ┃                    ┃   ┗━━━━━━━━━┛\n  ┃                    ┃\n  ┃                    ┃   ┏━━score━━┓\n  ┃                    ┃   ┃         ┃\n  ┃                    ┃   ┃  0      ┃\n  ┃                    ┃   ┃         ┃\n  ┃                    ┃   ┗━━━━━━━━━┛\n  ┃                    ┃\n  ┃                    ┃   ┏━━lines━━┓\n  ┃                    ┃   ┃         ┃\n  ┃                    ┃   ┃  0      ┃\n  ┃                    ┃   ┃         ┃\n  ┃                    ┃   ┗━━━━━━━━━┛\n  ┗━━━━━━━━━━━━━━━━━━━━┛\n                 ";
+
+std::string readLine(std::string str, int n);
+void printScreen(std::string screenstr);
+
+int nScreenWidth = 120;
+int nScreenHeight = 40;
+
+int main()
+{
+    // Setup from tetris (TODO: Find documentation to understand this)
+    setlocale(LC_CTYPE, "");
+    initscr();
+    noecho();
+    keypad(stdscr, TRUE);
+    nodelay(stdscr, TRUE);
+    curs_set(0);
+    start_color();
+    use_default_colors();
+
+    //wchar_t *screen = new wchar_t[nScreenWidth * nScreenHeight];
+    const std::string screenstr = "  ┏━━k-vernooy/tetris━━┓\n  ┃                    ┃\n  ┃                    ┃   ┏━━next━━━┓\n  ┃                    ┃   ┃         ┃\n  ┃                    ┃   ┃         ┃\n  ┃                    ┃   ┃         ┃\n  ┃                    ┃   ┗━━━━━━━━━┛\n  ┃                    ┃\n  ┃                    ┃   ┏━━score━━┓\n  ┃                    ┃   ┃         ┃\n  ┃                    ┃   ┃  0      ┃\n  ┃                    ┃   ┃         ┃\n  ┃                    ┃   ┗━━━━━━━━━┛\n  ┃                    ┃\n  ┃                    ┃   ┏━━lines━━┓\n  ┃                    ┃   ┃         ┃\n  ┃                    ┃   ┃  0      ┃\n  ┃                    ┃   ┃         ┃\n  ┃                    ┃   ┗━━━━━━━━━┛\n  ┗━━━━━━━━━━━━━━━━━━━━┛\n                 ";
+
+    unsigned int microseconds = 10000;
+    int count = 0;
+
+    while (count < 100)
+    {
+        usleep(microseconds);
+        //screen[nScreenWidth * nScreenHeight - 1] = '\0';
+        printScreen(screenstr);
+        count++;
+    }
+
+    // curses cleanup (TODO: Find documentation to understand this)
+    endwin();
+    return 0;
+}
+
+// Dependencies needed to print to the screen
+
 std::string readLine(std::string str, int n)
 {
     // returns the nth line of a string
@@ -43,24 +85,11 @@ std::string readLine(std::string str, int n)
     return s;
 }
 
-int main()
+void printScreen(std::string screenstr)
 {
-    // Setup from tetris (TODO: Find documentation to understand this)
-    setlocale(LC_CTYPE, "");
-    initscr();
-    noecho();
-    keypad(stdscr, TRUE);
-    nodelay(stdscr, TRUE);
-    curs_set(0);
-    start_color();
-    use_default_colors();
-
-    //std::cout << "Hello" << std::endl;
-
     // ===== Setup Window =====
     std::vector<std::vector<std::string> > window;
     std::string line;
-    const std::string screenstr = "  ┏━━k-vernooy/tetris━━┓\n  ┃                    ┃\n  ┃                    ┃   ┏━━next━━━┓\n  ┃                    ┃   ┃         ┃\n  ┃                    ┃   ┃         ┃\n  ┃                    ┃   ┃         ┃\n  ┃                    ┃   ┗━━━━━━━━━┛\n  ┃                    ┃\n  ┃                    ┃   ┏━━score━━┓\n  ┃                    ┃   ┃         ┃\n  ┃                    ┃   ┃  0      ┃\n  ┃                    ┃   ┃         ┃\n  ┃                    ┃   ┗━━━━━━━━━┛\n  ┃                    ┃\n  ┃                    ┃   ┏━━lines━━┓\n  ┃                    ┃   ┃         ┃\n  ┃                    ┃   ┃  0      ┃\n  ┃                    ┃   ┃         ┃\n  ┃                    ┃   ┗━━━━━━━━━┛\n  ┗━━━━━━━━━━━━━━━━━━━━┛\n                 ";
     std::stringstream f(screenstr);
     int lineNum = 0;
 
@@ -81,39 +110,24 @@ int main()
         window.push_back(rowVec);
     }
 
-    // ===== Print Screen =====
+    //https://stackoverflow.com/questions/54684870/printw-and-mvwprintw-do-not-print
+    int ch = getch();
 
-    unsigned int microseconds = 10000;
-    int count = 0;
-
-    while (count < 500)
+    // loop through the window and print it
+    for (int i = 0; i < window.size(); i++)
     {
-
-        usleep(microseconds);
-        //https://stackoverflow.com/questions/54684870/printw-and-mvwprintw-do-not-print
-        int ch = getch();
-
-        // loop through the window and print it
-        for (int i = 0; i < window.size(); i++)
+        for (int j = 0; j < window[i].size(); j++)
         {
-            for (int j = 0; j < window[i].size(); j++)
+            if (((i >= 1 && i < 19) && (j > 4 && j < 25)) || ((i >= 3 && i < 6) && (j > 33 && j < 43)))
             {
-                if (((i >= 1 && i < 19) && (j > 4 && j < 25)) || ((i >= 3 && i < 6) && (j > 33 && j < 43)))
-                {
-                    printw(std::string(" ").c_str());
-                }
-                else
-                {
-                    printw(window[i][j].c_str());
-                }
+                printw(std::string(" ").c_str());
             }
-            printw(std::string("\n").c_str());
+            else
+            {
+                printw(window[i][j].c_str());
+            }
         }
-        wmove(stdscr, 0, 0);
-        count++;
+        printw(std::string("\n").c_str());
     }
-
-    // curses cleanup (TODO: Find documentation to understand this)
-    endwin();
-    return 0;
+    wmove(stdscr, 0, 0);
 }
