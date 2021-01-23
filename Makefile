@@ -1,5 +1,5 @@
 CC = g++
 
 build: main.cpp
-	$(CC) -o main main.cpp -lcurses
+	$(CC) -std=c++17 -o main main.cpp -lncurses
 	./main
