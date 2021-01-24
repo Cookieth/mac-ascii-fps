@@ -15,23 +15,12 @@
 #include <chrono>
 
 /*
-* An attempt to get this tutorial https://www.youtube.com/watch?v=xW8skO7MFYw to work on mac.
-*/
-
-// Using https://github.com/k-vernooy/tetris
-
-// Curses library history: use ncurses (new curses) https://en.wikipedia.org/wiki/Ncurses
-
-/*
 Outstanding questions
 - What is being done in the setup?
 - What is being done for cleanup (endwin)?
 - What is stringstream?
 
 */
-
-// Leaving the tetris screen thing here... just in case!
-//const std::string screenstr = "  ┏━━k-vernooy/tetris━━┓\n  ┃                    ┃\n  ┃                    ┃   ┏━━next━━━┓\n  ┃                    ┃   ┃         ┃\n  ┃                    ┃   ┃         ┃\n  ┃                    ┃   ┃         ┃\n  ┃                    ┃   ┗━━━━━━━━━┛\n  ┃                    ┃\n  ┃                    ┃   ┏━━score━━┓\n  ┃                    ┃   ┃         ┃\n  ┃                    ┃   ┃  0      ┃\n  ┃                    ┃   ┃         ┃\n  ┃                    ┃   ┗━━━━━━━━━┛\n  ┃                    ┃\n  ┃                    ┃   ┏━━lines━━┓\n  ┃                    ┃   ┃         ┃\n  ┃                    ┃   ┃  0      ┃\n  ┃                    ┃   ┃         ┃\n  ┃                    ┃   ┗━━━━━━━━━┛\n  ┗━━━━━━━━━━━━━━━━━━━━┛\n                 ";
 
 std::string readLine(std::string str, int n);
 void printScreen(std::string screenstr);
@@ -53,10 +42,7 @@ float fDepth = 16.0f;
 
 int main()
 {
-    // https://stackoverflow.com/questions/4804298/how-to-convert-wstring-into-string (keeping this here temporarily)
-    // setlocale(LC_ALL, "-");
-
-    // Setup from tetris (TODO: Find documentation to understand this)
+    // Setup for ncurses
     setlocale(LC_CTYPE, "");
     initscr();
     noecho();
@@ -67,7 +53,6 @@ int main()
     use_default_colors();
 
     char *screen = new char[nScreenWidth * nScreenHeight];
-    //const std::string screenstr = "  ┏━━k-vernooy/tetris━━┓\n  ┃                    ┃\n  ┃                    ┃   ┏━━next━━━┓\n  ┃                    ┃   ┃         ┃\n  ┃                    ┃   ┃         ┃\n  ┃                    ┃   ┃         ┃\n  ┃                    ┃   ┗━━━━━━━━━┛\n  ┃                    ┃\n  ┃                    ┃   ┏━━score━━┓\n  ┃                    ┃   ┃         ┃\n  ┃                    ┃   ┃  0      ┃\n  ┃                    ┃   ┃         ┃\n  ┃                    ┃   ┗━━━━━━━━━┛\n  ┃                    ┃\n  ┃                    ┃   ┏━━lines━━┓\n  ┃                    ┃   ┃         ┃\n  ┃                    ┃   ┃  0      ┃\n  ┃                    ┃   ┃         ┃\n  ┃                    ┃   ┗━━━━━━━━━┛\n  ┗━━━━━━━━━━━━━━━━━━━━┛\n                 ";
 
     // TODO: Load map from file (?)
     std::string map;
@@ -94,7 +79,7 @@ int main()
     unsigned int microseconds = 10000;
     int count = 0;
 
-    //NEWLINE TEST:
+    // Reduce screen width by 1 to allow for newline character
     nScreenWidth -= 1;
 
     while (true)
@@ -342,11 +327,12 @@ int main()
         // Marker for the player
         screen[((int)fPlayerX + 1) * nScreenWidth + (int)fPlayerY] = 'P';
 
-        //NEWLINE TEST
+        // Insert newline at the end of each line
         for (int i = 0; i < nScreenHeight; i++)
         {
             screen[i * nScreenWidth] = '\n';
         }
+
         screen[nScreenWidth * nScreenHeight - 1] = '\0';
         printScreen(std::string(screen));
 
@@ -355,7 +341,7 @@ int main()
         //count++;
     }
 
-    // curses cleanup (TODO: Find documentation to understand this)
+    // curses cleanup
     endwin();
     return 0;
 }
@@ -401,9 +387,6 @@ void printScreen(std::string screenstr)
         }
         window.push_back(rowVec);
     }
-
-    //https://stackoverflow.com/questions/54684870/printw-and-mvwprintw-do-not-print
-    //int ch = getch();
 
     // loop through the window and print it
     for (int i = 0; i < window.size(); i++)
