@@ -76,14 +76,14 @@ int main()
     map += "#..............#";
     map += "#..............#";
     map += "#..............#";
-    map += "#...#..........#";
+    map += "#..............#";
+    map += "#...##.........#";
+    map += "#..............#";
+    map += "#..........#...#";
     map += "#..............#";
     map += "#..............#";
+    map += "#...#####......#";
     map += "#..............#";
-    map += "#...#..........#";
-    map += "#..............#";
-    map += "#..............#";
-    map += "#.........######";
     map += "#..............#";
     map += "#..............#";
     map += "################";
@@ -158,9 +158,14 @@ int main()
             float fDistanceToWall = 0;
             bool bHitWall = false;
 
+            // Hit a boundary (delineate the walls, where the corner of the blocks are)
+            bool bBoundary = false;
+
             // unit vector in each direction
             float fEyeX = sinf(fRayAngle);
             float fEyeY = cosf(fRayAngle);
+
+            // --- Ray Casting Rendering ---
 
             while (!bHitWall && fDistanceToWall < fDepth)
             {
@@ -177,14 +182,66 @@ int main()
                 }
                 else
                 {
-                    //Convert 3D coords to 2D array
+                    // Case for hitting the wall
+                    // Convert 3D coords to 2D array
                     if (map[nTestY * nMapWidth + nTestX] == '#')
                     {
                         bHitWall = true;
                         //fDistanceToWall will retain it's value
+
+                        // --- Edge handling mechanism ---
+
+                        // Essentially, draw a line from corners of cells to the player,
+                        // If the ray has a small angle to that line, then it must be an edge!
+                        std::vector<std::pair<float, float> > p; // distance, dot product (angle)
+
+                        //4 corners to try
+                        for (int tx = 0; tx < 2; tx++)
+                        {
+                            for (int ty = 0; ty < 2; ty++)
+                            {
+                                // Create vectors from perfect corners to the player
+                                float vy = (float)nTestY + ty - fPlayerY;
+                                float vx = (float)nTestX + tx - fPlayerX;
+
+                                // Get the magnitude of that vector
+                                float d = sqrt(vx * vx + vy * vy);
+                                // Get the dot product of the vector
+                                float dot = (fEyeX * vx / d) + (fEyeY * vy / d);
+                                p.push_back(std::make_pair(d, dot));
+                            }
+                        }
+
+                        // Sort Pairs from closest to farthest
+                        // Check if the first element is less than the other first element (magnitude of the vector)
+                        sort(p.begin(), p.end(), [](const std::pair<float, float> &left, const std::pair<float, float> &right) { return left.first < right.first; });
+
+                        // The threshold of the angle such that if it is less than this value,
+                        // Then the angle is considered "acute", and it must be a boundary.
+                        float fBound = 0.01;
+
+                        // If you take the arccos of the dot product, you get the angle.
+                        if (acos(p.at(0).second) < fBound)
+                        {
+                            bBoundary = true;
+                        }
+                        // Only need to test for the first two/three corners
+                        if (acos(p.at(1).second) < fBound)
+                        {
+                            bBoundary = true;
+                        }
+                        /*
+                        if (acos(p.at(2).second) < fBound)
+                        {
+                            bBoundary = true;
+                        }*/
+
+                        // ------
                     }
                 }
             }
+
+            // ------
 
             // Ceiling and floor filling
             int nCeiling = (float)(nScreenHeight / 2.0) - nScreenHeight / ((float)fDistanceToWall);
@@ -214,6 +271,13 @@ int main()
             else
             {
                 nShade = '.';
+            }
+
+            // (See boundary before)
+            // If it is a boundary, then outline it
+            if (bBoundary)
+            {
+                nShade = ' ';
             }
 
             // Draw Column
@@ -256,6 +320,24 @@ int main()
                 }
             }
         }
+
+        // === Rendering the Map ===
+        // Display Stats (from the tutorial)
+        // TODO: Find out the equivalent of this.
+        //swprintf_s(screen, 40, L"X=%3.2f, Y=%3.2f, A=%3.2f FPS=%3.2f ", fPlayerX, fPlayerY, fPlayerA, 1.0f / fElapsedTime);
+
+        // Display Map
+
+        // Iterate through the coordinates, fill in the map
+        for (int nx = 0; nx < nMapWidth; nx++)
+            for (int ny = 0; ny < nMapWidth; ny++)
+            {
+
+                screen[(ny + 1) * nScreenWidth + nx] = map[ny * nMapWidth + nx];
+            }
+
+        // Marker for the player
+        screen[((int)fPlayerX + 1) * nScreenWidth + (int)fPlayerY] = 'P';
 
         screen[nScreenWidth * nScreenHeight - 1] = '\0';
         printScreen(std::string(screen));
