@@ -52,7 +52,8 @@ int main()
     start_color();
     use_default_colors();
 
-    char *screen = new char[nScreenWidth * nScreenHeight];
+    //char *screen = new char[nScreenWidth * nScreenHeight];
+    std::vector<char> screen(nScreenWidth * nScreenHeight);
 
     // TODO: Load map from file (?)
     std::string map;
@@ -84,13 +85,18 @@ int main()
 
     while (true)
     {
+        // Constantly resize to the size of the window
+        nScreenWidth = getmaxx(stdscr);
+        nScreenHeight = getmaxy(stdscr);
+        screen.resize(nScreenWidth * nScreenHeight);
+
         // === Controls ===
 
         tp2 = std::chrono::system_clock::now();
         std::chrono::duration<float> elapsedTime = tp2 - tp1;
         tp1 = tp2;
         // My rendering print is not optimized, so I need to make it faster than the tutorial.
-        float fElapsedTime = 0.25f; //elapsedTime.count();
+        float fElapsedTime = elapsedTime.count();
 
         int ch = getch();
         if (ch)
@@ -334,7 +340,7 @@ int main()
         }
 
         screen[nScreenWidth * nScreenHeight - 1] = '\0';
-        printScreen(std::string(screen));
+        printScreen(std::string(screen.data()));
 
         // Debugging things
         //usleep(microseconds);
@@ -365,7 +371,19 @@ std::string readLine(std::string str, int n)
 
 void printScreen(std::string screenstr)
 {
-    // ===== Setup Window =====
+    /*
+    wprintw(stdscr, screenstr.data());
+    wmove(stdscr, 0, 0);*/
+
+    // loop through the window and print it
+    for (int i = 0; i < screenstr.length(); i++)
+    {
+        printw((const char *)(&screenstr[i]));
+    }
+    wmove(stdscr, 0, 0);
+
+    /*
+        // ===== Setup Window =====
     std::vector<std::vector<std::string> > window;
     std::string line;
     std::stringstream f(screenstr);
@@ -397,5 +415,5 @@ void printScreen(std::string screenstr)
         }
         printw("\n");
     }
-    wmove(stdscr, 0, 0);
+    wmove(stdscr, 0, 0);*/
 }
