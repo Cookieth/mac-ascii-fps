@@ -94,6 +94,9 @@ int main()
     unsigned int microseconds = 10000;
     int count = 0;
 
+    //NEWLINE TEST:
+    nScreenWidth -= 1;
+
     while (true)
     {
         // === Controls ===
@@ -339,6 +342,11 @@ int main()
         // Marker for the player
         screen[((int)fPlayerX + 1) * nScreenWidth + (int)fPlayerY] = 'P';
 
+        //NEWLINE TEST
+        for (int i = 0; i < nScreenHeight; i++)
+        {
+            screen[i * nScreenWidth] = '\n';
+        }
         screen[nScreenWidth * nScreenHeight - 1] = '\0';
         printScreen(std::string(screen));
 
@@ -402,16 +410,9 @@ void printScreen(std::string screenstr)
     {
         for (int j = 0; j < window[i].size(); j++)
         {
-            if (((i >= 1 && i < 19) && (j > 4 && j < 25)) || ((i >= 3 && i < 6) && (j > 33 && j < 43)))
-            {
-                printw(std::string(" ").c_str());
-            }
-            else
-            {
-                printw(window[i][j].c_str());
-            }
+            printw(window[i][j].c_str());
         }
-        printw(std::string("\n").c_str());
+        printw("\n");
     }
     wmove(stdscr, 0, 0);
 }
