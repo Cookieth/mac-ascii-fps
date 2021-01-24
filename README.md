@@ -19,6 +19,6 @@ This project ports over the same raytracing and rendering logic from the windows
 
 ## Resources
 
-`javidx9`'s FPS for Windows: https://github.com/OneLoneCoder/CommandLineFPS
-ASCII Table for Reference: http://www.asciitable.com/
-`ncurses` Usage Inspired by: https://github.com/k-vernooy/tetris
+- `javidx9`'s FPS for Windows: https://github.com/OneLoneCoder/CommandLineFPS
+- ASCII Table for Reference: http://www.asciitable.com/
+- `ncurses` Usage Inspired by: https://github.com/k-vernooy/tetris
