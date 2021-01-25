@@ -10,6 +10,10 @@ cd mac-ascii-fps
 make
 ```
 
+## Controls
+
+Move around with `w`, `a`, `s`, `d`. `w` and `s` move backwards and forwards, `a`, and `d` rotate.
+
 ## Overview
 A couple of years ago, I came across this video: https://www.youtube.com/watch?v=xW8skO7MFYw by `javidx9` and I was very intrigued by the ability to render a pseudo-3D environment on a 2D console, with such few lines of code.
 
